@@ -1,11 +1,12 @@
 // Copyright 2026 Xeno Tech
 // SPDX-License-Identifier: Apache-2.0
-// AstraPS5 native shell. Only locally installed Flatpak games can launch. No PS5 boot support.
+// AstraPS5 native shell. Flatpak game launch; Steam entries are discovery-only.
 #include "astraps5/menu.hpp"
 #include "astraps5/menu_state.hpp"
 #include "astraps5/diagnostics.hpp"
 #include "astraps5/game.hpp"
 #include "astraps5/library.hpp"
+#include "astraps5/steam.hpp"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
@@ -52,6 +53,16 @@ struct App {
     Palette colors{};
     std::vector<std::string> report;
     GameLibrary library{};
+    SteamDiscovery steam{};
+    // Menu index covers both Flatpak entries (launchable) and Steam manifests
+    // (discovery-only until Steam integration has been validated).
+    struct MenuGame {
+        std::string name;
+        std::string subtitle;
+        bool steam_entry = false;
+        std::size_t source_index = 0;
+    };
+    std::vector<MenuGame> entries;
     std::string runningGame;
     pid_t gamePid = -1;
     std::filesystem::path gameLog;
@@ -87,15 +98,31 @@ struct App {
     }
     void refreshLibrary() {
         library = discover_flatpak_games();
-        state.game_count = library.games.size();
+        steam = discover_steam();
+        entries.clear();
+        for (std::size_t i = 0; i < library.games.size(); ++i) {
+            entries.push_back({library.games[i].name, "Flatpak / " + library.games[i].flatpak_id, false, i});
+        }
+        for (std::size_t i = 0; i < steam.games.size(); ++i) {
+            entries.push_back({steam.games[i].name, "Steam / " + steam.games[i].app_id + " (discovery only)", true, i});
+        }
+        std::sort(entries.begin(), entries.end(), [](const MenuGame& a, const MenuGame& b) {
+            return a.name < b.name || (a.name == b.name && a.subtitle < b.subtitle);
+        });
+        state.game_count = entries.size();
         if (state.game_count == 0) state.selected_game = 0;
         else if (state.selected_game >= state.game_count) state.selected_game = state.game_count - 1;
     }
     void requestLaunch() {
         if (!state.launch_requested) return;
         state.launch_requested = false;
-        if (state.selected_game >= library.games.size()) return;
-        const auto& candidate = library.games[state.selected_game];
+        if (state.selected_game >= entries.size()) return;
+        const auto& entry = entries[state.selected_game];
+        if (entry.steam_entry) {
+            gameStatus = "Steam title detected. Game launching is not implemented yet.";
+            return;
+        }
+        const auto& candidate = library.games[entry.source_index];
         if (gamePid > 0) {
             gameStatus = runningGame + " is already running. Close it before starting another game.";
             return;
@@ -171,7 +198,7 @@ struct App {
             if (current) rectangle(x, y + i * kListStride, 4, kRowHeight, colors.accent);
             std::string label = actionLabel(actions[i]);
             if (actions[i] == MenuAction::Games)
-                label += " (" + std::to_string(library.games.size()) + ")";
+                label += " (" + std::to_string(entries.size()) + ")";
             text(x + 24, y + 34 + i * kListStride, label,
                  current ? colors.primary : colors.subdued, normal);
             if (current) text(x + 443, y + 34 + i * kListStride, ">", colors.accent, normal);
@@ -182,27 +209,27 @@ struct App {
     void games() const {
         const int x = origin_x();
         centered(width / 2, 80, "GAMES", colors.primary, heading);
-        centered(width / 2, 111, "INSTALLED FLATPAK GAMES  /  LINUX PC ONLY", colors.accent, small);
+        centered(width / 2, 111, "FLATPAK LAUNCH / STEAM DISCOVERY / PROTON: " + std::to_string(steam.protons.size()), colors.accent, small);
         line(x, 134, x + 480, 134, colors.border);
-        if (library.games.empty()) {
-            centered(width / 2, height / 2 - 25, "No Flatpak games found.", colors.primary, normal);
-            centered(width / 2, height / 2 + 5, "Install a Game-category Flatpak and press R.", colors.subdued, small);
+        if (entries.empty()) {
+            centered(width / 2, height / 2 - 25, "No installed games found.", colors.primary, normal);
+            centered(width / 2, height / 2 + 5, "Install a Flatpak or Steam title, then press R.", colors.subdued, small);
         } else {
             const int first = firstVisibleGame();
-            for (int i = 0; i < maxVisibleGames() && first + i < static_cast<int>(library.games.size()); ++i) {
+            for (int i = 0; i < maxVisibleGames() && first + i < static_cast<int>(entries.size()); ++i) {
                 const int index = first + i;
-                const auto& game = library.games[static_cast<std::size_t>(index)];
+                const auto& game = entries[static_cast<std::size_t>(index)];
                 const int y = kGameListTop + i * kListStride;
                 const bool current = state.selected_game == static_cast<std::size_t>(index);
                 rectangle(x, y, 480, kRowHeight, current ? colors.panelHover : colors.panel);
                 if (current) rectangle(x, y, 4, kRowHeight, colors.accent);
                 text(x + 17, y + 22, displayLabel(game.name, 42),
                      current ? colors.primary : colors.subdued, normal);
-                text(x + 17, y + 43, displayLabel(game.flatpak_id, 63), colors.subdued, small);
+                text(x + 17, y + 43, displayLabel(game.subtitle, 63), colors.subdued, small);
             }
-            if (static_cast<int>(library.games.size()) > maxVisibleGames()) {
+            if (static_cast<int>(entries.size()) > maxVisibleGames()) {
                 text(x + 13, height - 120,
-                     std::to_string(state.selected_game + 1) + "/" + std::to_string(library.games.size()),
+                     std::to_string(state.selected_game + 1) + "/" + std::to_string(entries.size()),
                      colors.accent, small);
             }
         }
@@ -210,7 +237,7 @@ struct App {
             const auto status = displayLabel(gameStatus, 76);
             centered(width / 2, height - 94, status, colors.accent, small);
         }
-        centered(width / 2, height - 65, "ENTER - LAUNCH   R - REFRESH   ESC - BACK",
+        centered(width / 2, height - 65, "ENTER - SELECT  /  FLATPAK LAUNCH ONLY    R - REFRESH    ESC - BACK",
                  colors.subdued, small);
     }
     void diagnostics() const {
@@ -243,7 +270,7 @@ struct App {
         const int x = origin_x();
         const int y = state.screen == MenuScreen::Home ? item_y() : kGameListTop;
         const int count = state.screen == MenuScreen::Home ? kHomeActions :
-            std::min(maxVisibleGames(), static_cast<int>(library.games.size()) - firstVisibleGame());
+            std::min(maxVisibleGames(), static_cast<int>(entries.size()) - firstVisibleGame());
         for (int i = 0; i < count; ++i) {
             const int top = y + i * kListStride;
             if (mouseX >= x && mouseX <= x + 480 && mouseY >= top && mouseY <= top + kRowHeight) {
@@ -257,7 +284,7 @@ struct App {
         if (state.screen == MenuScreen::Home && index >= 0 && index < kHomeActions)
             state.selected = static_cast<MenuAction>(index);
         else if (state.screen == MenuScreen::Games && index >= 0 &&
-                 static_cast<std::size_t>(index) < library.games.size())
+                 static_cast<std::size_t>(index) < entries.size())
             state.selected_game = static_cast<std::size_t>(index);
     }
     void scroll(int direction) {
@@ -319,6 +346,9 @@ int run_menu() {
     app.small = loadFont(app.display, "-adobe-helvetica-medium-r-normal--13-*-*-*-*-*-iso8859-1");
     app.report = splitLines(report_text(collect_diagnostics()));
     app.refreshLibrary();
+    const auto steamStatus = splitLines(steam_discovery_text(app.steam));
+    app.report.emplace_back("");
+    app.report.insert(app.report.end(), steamStatus.begin(), steamStatus.end());
     XMapWindow(app.display, app.window);
     while (app.state.running) {
         app.checkGame();

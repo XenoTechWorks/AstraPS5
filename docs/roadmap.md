@@ -84,3 +84,13 @@ AstraPS5 is an experimental test project. All dates and compatibility outcomes r
 - [x] Expose `astra games list [--json]` and `astra games run <app_id>` commands.
 - [x] Unit and mocked UI integration tests (no real PS5 hardware available).
 - [ ] Steam game detection, Proton support and native PS5 console testing.
+
+## v0.2.5-dev — Steam and Proton metadata discovery (Linux PC)
+
+- [x] Read local Steam VDF libraries and appmanifest files; handle multiple libraries and duplicates.
+- [x] Reject malformed, stale, or partial game manifests.
+- [x] Detect installed official and custom Proton directories without running them.
+- [x] Display Steam entries (discovery-only) alongside launchable Flatpak games in the minimal UI.
+- [x] Add `astra steam list [--json]` for Linux-PC discovery results.
+- [x] Unit tests and virtual-display UI smoke test.
+- [ ] Steam game launching, Proton compatibility validation, multiplayer, and PS5 console testing.

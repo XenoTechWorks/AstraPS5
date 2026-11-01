@@ -1,4 +1,4 @@
-# Astra Linux game launching — v0.2.4-dev
+# Astra Linux game launching — v0.2.5-dev
 
 > **EXPERIMENTAL TEST PROJECT:** These features run existing applications on a normal Linux PC. Nothing here emulates a PS5, boots a console, verifies PS5 GPU support, or enables multiplayer.
 
@@ -53,7 +53,7 @@ Astra uses POSIX `posix_spawn()` and `waitpid()`; **it does not execute profile 
 ## Current limitations
 
 - The minimal window uses X11/XWayland and keyboard/mouse. No native PS5 tile, automatic console boot, or controller-driven Astra UI yet.
-- The menu now discovers installed **Flatpak Game-category apps** through exported desktop metadata; see [dynamic game library](game-library.md). Native executables still require explicit game profiles, and Steam discovery is not implemented.
+- The menu now discovers installed **Flatpak Game-category apps** through exported desktop metadata; see [dynamic game library](game-library.md). Native executables still require explicit game profiles. Steam manifest and Proton directory discovery is available separately via `astra steam list`, but Steam launching and Proton execution are not implemented.
 - Logs and exit codes are informational; crash analysis, stack traces and performance monitoring are future work.
 - Wine/Proton, PS5 hardware, GPU driver compatibility, online multiplayer and anti-cheat have not been implemented or verified.
 

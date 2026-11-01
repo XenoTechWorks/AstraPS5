@@ -3,6 +3,7 @@
 #include "astraps5/boot.hpp"
 #include "astraps5/game.hpp"
 #include "astraps5/library.hpp"
+#include "astraps5/steam.hpp"
 #include "astraps5/diagnostics.hpp"
 #include "astraps5/menu.hpp"
 #include <iostream>
@@ -10,18 +11,19 @@
 
 namespace {
 void help() {
-    std::cout << "AstraPS5 0.2.4-dev - Experimental Test Project\n\n"
+    std::cout << "AstraPS5 0.2.5-dev - Experimental Test Project\n\n"
                  "Usage:\n"
                  "  astra menu               Open the minimal native Astra UI\n"
                  "  astra doctor [--json]    Read-only Linux and gaming diagnostics\n"
                  "  astra boot verify <manifest> [--json]  Verify Linux image integrity (no boot)\n"
                  "  astra games list [--json]  Discover installed Flatpak games\n"
                  "  astra games run <app_id>  Launch a detected Flatpak game\n"
+                 "  astra steam list [--json]  Discover installed Steam titles / Proton builds\n"
                  "  astra game check <profile> [--json]   Check native Linux game profile\n"
                  "  astra game run <profile>   Launch native Linux executable (explicit)\n"
                  "  astra version            Print current version\n"
                  "  astra help               Show this help\n\n"
-                 "PS5 booting, Proton integration, and multiplayer are NOT implemented.\n";
+                 "PS5 booting, Steam launching, Proton execution, and multiplayer are NOT implemented.\n";
 }
 }
 
@@ -33,7 +35,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
     if (command == "version" && argc == 2) {
-        std::cout << "AstraPS5 0.2.4-dev\n";
+        std::cout << "AstraPS5 0.2.5-dev\n";
         return 0;
     }
     if (command == "menu" && argc == 2) {
@@ -45,6 +47,13 @@ int main(int argc, char* argv[]) {
         std::cout << (argc == 5 ? astra::boot_verification_json(result)
                                : astra::boot_verification_text(result));
         return result.verified ? 0 : 1;
+    }
+    if (command == "steam" && argc >= 3 && std::string(argv[2]) == "list" &&
+        (argc == 3 || (argc == 4 && std::string(argv[3]) == "--json"))) {
+        const auto discovery = astra::discover_steam();
+        std::cout << (argc == 4 ? astra::steam_discovery_json(discovery)
+                                : astra::steam_discovery_text(discovery));
+        return 0;
     }
     if (command == "games" && argc >= 3) {
         const std::string subcommand = argv[2];

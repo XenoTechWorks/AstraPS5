@@ -1,10 +1,10 @@
-# Astra game library — v0.2.4-dev
+# Astra Flatpak game library — v0.2.5-dev
 
-> **Experimental Linux-PC functionality.** The library does not check whether a game can run on PS5 hardware. It does not integrate Steam, Wine/Proton, multiplayer, or any console boot environment.
+> **Experimental Linux-PC functionality.** This Flatpak discovery component does not check whether a game can run on PS5 hardware. Astra now has a **separate**, read-only Steam/Proton scanner described in [Steam and Proton discovery](steam-discovery.md). Neither component enables Steam or Proton game execution on PS5, multiplayer, or any console boot environment.
 
 ## What it does
 
-AstraPS5 now discovers *installed Flatpak applications categorized as games* and displays them in a minimal native C++ menu. No fake title cards or store integrations are involved.
+AstraPS5 discovers *installed Flatpak applications categorized as games* and displays them alongside Steam entries in a minimal native C++ menu. No fake title cards or store integrations are involved.
 
 The discovery process:
 
@@ -34,7 +34,7 @@ The `games run` command refuses to run apps that aren't in Astra's discovered ga
 ./build/astra menu
 ```
 
-On **Home**, select **Games**. On **Games**, use Up/Down to choose an installed game and Enter to launch it. Press **R** to refresh the list after an installation/uninstallation, or Escape to go back.
+On **Home**, select **Games**. On **Games**, use Up/Down to choose an installed game and Enter to launch it if it is a Flatpak. Steam entries are currently discovery-only. Press **R** to refresh the list after an installation/uninstallation, or Escape to go back.
 
 The window remains responsive while the game runs. Launch output is saved to a private per-session log in `$XDG_STATE_HOME/astraps5/logs` or `~/.local/state/astraps5/logs`. Review logs for personal data before sharing them.
 
