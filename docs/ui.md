@@ -1,38 +1,32 @@
-# Minimal native Astra menu (v0.2.0-dev)
+# Minimal native Astra menu (v0.2.3-dev)
 
-**Status:** Real native Linux executable UI prototype. **Not a PS5 app, PS5 boot system, or game launcher.**
+**Experimental Linux desktop prototype; not a PS5 app or boot system.**
 
-This intentionally sparse menu exists to connect UI work to the existing C++ codebase, rather than creating a standalone HTML or JS demo.
+The C++ X11/XWayland menu deliberately remains sparse. At start it probes for the installed **SuperTuxKart Flatpak**. When found, its home actions are:
 
-## Behavior
+1. **Launch SuperTuxKart** — executes the installed Flatpak through shared Astra Core; the window remains responsive while the game runs.
+2. **Diagnostics** — displays the same real report as `astra doctor`.
+3. **Exit** — closes Astra's menu.
 
-- `astra menu` opens a small native X11 window. An XWayland server can provide X11 compatibility in a Wayland session.
-- Home screen offers just **Diagnostics** and **Exit**.
-- Diagnostics calls `astra::collect_diagnostics()` from the same `astra_diagnostics` library used by `astra doctor`, and displays its real text report.
-- Keyboard: Up/Down, Enter, Escape; mouse: hover/click; scroll diagnostics with arrows or wheel.
-- This menu does not need PS5 hardware and does not claim to recognize it. It needs no elevated permissions.
-- No game launching, fake tiles, or future-only actions are exposed.
+Without that Flatpak, the menu shows only Diagnostics and Exit. No fake game library is shown. The launcher checks app presence again before each launch and reports completion and logs.
 
-## Integration boundary
+### Controls
 
-The menu is a small presentation layer, not a bootloader:
+Arrow Up / Arrow Down, Enter or Space, Escape, mouse hover/click. Pressing Escape from Diagnostics returns home. This UI does not yet support controllers and does not render game content itself.
+
+### Architecture boundary
 
 ```text
-src/main.cpp  (astra menu)
-     ├── astra::run_menu()       src/menu_x11.cpp
-     │       ├── menu state      src/menu_state.cpp
-     │       └── diagnostics     src/diagnostics.cpp
-     └── other commands         src/diagnostics.cpp
+src/main.cpp   astra menu
+  └─ src/menu_x11.cpp         window and asynchronous process polling
+      ├─ menu_state.cpp       state transitions
+      ├─ diagnostics.cpp      host diagnostics
+      └─ game.cpp             Flatpak presence, launch, log and exit status
 ```
 
-Future PS5-side entry programs may need different APIs and build systems. The real PS5 entry app and boot code will be separate modules; **do not try to compile this X11 UI as a native PS5 home-screen executable**.
+Do not compile this desktop X11 prototype as a native PS5 app. A future Astra Entry / Astra Shell must target the actual supported boot environment and provide controller-first input.
 
-## Design choice
 
-Xlib was selected for a dependency-light *Linux prototype* that can be built and tested now. For a production Astra Shell, a modern renderer supporting Wayland, controller focus, resolutions, and graphical acceleration should replace the X11 implementation without rewriting the diagnostics/core logic.
+## v0.2.4 — minimal installed-game list
 
-## Limitations
-
-- PC keyboard and mouse only; no controller input yet.
-- This UI requires an X11/XWayland display and does not work directly on the PlayStation system UI.
-- The current hardware checks are best-effort diagnostic probes, not proof that PS5 drivers or game runtimes are ready.
+The home screen now has Games, Diagnostics and Exit. Games lists *actual installed* Flatpak apps with a `Game` desktop category. Arrows select, Enter launches, R refreshes and Escape returns. The game UI is a plain text list, with no mock library cards or shop. It is still an X11 desktop development prototype—not a PS5 tile or console-shell app.

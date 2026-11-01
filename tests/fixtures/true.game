@@ -1,0 +1,4 @@
+# Portable Linux test fixture. Does not launch a real game.
+format=astra-game-v1
+name=No-op Test
+executable=/bin/true

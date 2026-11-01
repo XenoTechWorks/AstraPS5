@@ -55,3 +55,32 @@ AstraPS5 is an experimental test project. All dates and compatibility outcomes r
 
 - [x] Read-only boot manifest format v1, SHA-256 checksum verification, CLI/JSON output, negative tests.
 - [ ] Console-specific entry app, boot handoff, game launch and PS5-specific hardware testing remain future work.
+
+
+## v0.2.2-dev — Native game launch preflight (PC Linux)
+
+- [x] Strict native game profile parser and executable detection.
+- [x] Shell-free process launching using `posix_spawn`.
+- [x] SuperTuxKart example profile and automated tests.
+- [ ] Verified SuperTuxKart graphics/input on actual PS5 Linux hardware (requires console).
+- [ ] PS5 app-first entry and Linux image boot.
+
+## v0.2.3-dev — Flatpak and minimal game launch (Linux PC)
+
+- [x] First-class Flatpak profiles with installed-app checks.
+- [x] Per-launch private stdout/stderr logs and process exit reporting.
+- [x] Native menu entry that appears only when SuperTuxKart Flatpak is installed.
+- [x] Nonblocking game process polling in the X11 menu.
+- [x] PC-only, user-reported SuperTuxKart gameplay record (online untested).
+- [ ] General game library management, Proton support, controller input and PS5 hardware tests.
+
+
+## v0.2.4-dev — Discovered Flatpak game library (Linux PC)
+
+- [x] Scan installed Flatpak desktop exports and filter by `Game` category.
+- [x] Confirm applications are installed and deduplicate by Flatpak app ID.
+- [x] Display the current game list in the minimal X11 menu with selection and refresh.
+- [x] Launch selected installed games with the existing nonblocking launcher and private logs.
+- [x] Expose `astra games list [--json]` and `astra games run <app_id>` commands.
+- [x] Unit and mocked UI integration tests (no real PS5 hardware available).
+- [ ] Steam game detection, Proton support and native PS5 console testing.

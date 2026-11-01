@@ -1,0 +1,7 @@
+# AstraPS5 v0.2.3: game-profile example for Flatpak SuperTuxKart.
+# Install with: flatpak install flathub net.supertuxkart.SuperTuxKart
+# This verifies and launches a Linux PC Flatpak, not a PlayStation game.
+format=astra-game-v1
+name=SuperTuxKart
+runtime=flatpak
+app_id=net.supertuxkart.SuperTuxKart

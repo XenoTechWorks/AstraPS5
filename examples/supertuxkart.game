@@ -1,0 +1,5 @@
+format=astra-game-v1
+name=SuperTuxKart
+executable=flatpak
+arg0=run
+arg1=net.supertuxkart.SuperTuxKart

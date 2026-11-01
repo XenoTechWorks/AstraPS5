@@ -1,6 +1,8 @@
 // Copyright 2026 Xeno Tech
 // SPDX-License-Identifier: Apache-2.0
 #include "astraps5/boot.hpp"
+#include "astraps5/game.hpp"
+#include "astraps5/library.hpp"
 #include "astraps5/diagnostics.hpp"
 #include "astraps5/menu.hpp"
 #include <iostream>
@@ -8,14 +10,18 @@
 
 namespace {
 void help() {
-    std::cout << "AstraPS5 0.2.1-dev - Experimental Test Project\n\n"
+    std::cout << "AstraPS5 0.2.4-dev - Experimental Test Project\n\n"
                  "Usage:\n"
                  "  astra menu               Open the minimal native Astra UI\n"
                  "  astra doctor [--json]    Read-only Linux and gaming diagnostics\n"
                  "  astra boot verify <manifest> [--json]  Verify Linux image integrity (no boot)\n"
+                 "  astra games list [--json]  Discover installed Flatpak games\n"
+                 "  astra games run <app_id>  Launch a detected Flatpak game\n"
+                 "  astra game check <profile> [--json]   Check native Linux game profile\n"
+                 "  astra game run <profile>   Launch native Linux executable (explicit)\n"
                  "  astra version            Print current version\n"
                  "  astra help               Show this help\n\n"
-                 "AstraPS5 does not currently launch games or access PSN.\n";
+                 "PS5 booting, Proton integration, and multiplayer are NOT implemented.\n";
 }
 }
 
@@ -27,7 +33,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
     if (command == "version" && argc == 2) {
-        std::cout << "AstraPS5 0.2.1-dev\n";
+        std::cout << "AstraPS5 0.2.4-dev\n";
         return 0;
     }
     if (command == "menu" && argc == 2) {
@@ -39,6 +45,45 @@ int main(int argc, char* argv[]) {
         std::cout << (argc == 5 ? astra::boot_verification_json(result)
                                : astra::boot_verification_text(result));
         return result.verified ? 0 : 1;
+    }
+    if (command == "games" && argc >= 3) {
+        const std::string subcommand = argv[2];
+        if (subcommand == "list" && (argc == 3 || (argc == 4 && std::string(argv[3]) == "--json"))) {
+            const auto library = astra::discover_flatpak_games();
+            std::cout << (argc == 4 ? astra::game_library_json(library)
+                                    : astra::game_library_text(library));
+            return library.error.empty() ? 0 : 1;
+        }
+        if (subcommand == "run" && argc == 4) {
+            const auto library = astra::discover_flatpak_games();
+            for (const auto& game : library.games) {
+                if (game.flatpak_id == argv[3]) {
+                    // Revalidate because the app could have been uninstalled.
+                    const auto verified = astra::inspect_flatpak_app(game.name, game.flatpak_id);
+                    if (!verified.valid) { std::cerr << verified.error << '\n'; return 1; }
+                    return astra::launch_game(verified);
+                }
+            }
+            std::cerr << "Game is not in the discovered Flatpak game library: " << argv[3] << '\n';
+            return 1;
+        }
+    }
+    if (command == "game" && (argc == 4 || (argc == 5 && std::string(argv[4]) == "--json"))) {
+        const std::string mode = argv[2];
+        if (mode == "check" || (mode == "run" && argc == 4)) {
+            const auto profile = astra::inspect_game_profile(argv[3]);
+            if (mode == "check") {
+                std::cout << (argc == 5 ? astra::game_profile_json(profile)
+                                       : astra::game_profile_text(profile));
+                return profile.valid ? 0 : 1;
+            }
+            if (!profile.valid) {
+                std::cerr << astra::game_profile_text(profile);
+                return 1;
+            }
+            std::cout << "Launching Linux game: " << profile.name << "\n" << std::flush;
+            return astra::launch_game(profile);
+        }
     }
     if (command == "doctor" && (argc == 2 || (argc == 3 && std::string(argv[2]) == "--json"))) {
         const auto report = astra::collect_diagnostics();

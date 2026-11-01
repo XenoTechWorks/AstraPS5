@@ -1,0 +1,5 @@
+# Rename/copy this file to supertuxkart.game after installing SuperTuxKart.
+# This uses the Linux-native game, NOT a PS5 executable or Proton.
+format=astra-game-v1
+name=SuperTuxKart
+executable=supertuxkart
