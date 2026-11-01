@@ -50,3 +50,8 @@ AstraPS5 is an experimental test project. All dates and compatibility outcomes r
 - [ ] Controller-friendly Astra Launcher
 - [ ] Public compatibility dashboard built from user-approved test reports
 - [ ] Package the Astra System image and Astra Entry flow for supported PS5 hardware
+
+## v0.2.1-dev — image integrity groundwork
+
+- [x] Read-only boot manifest format v1, SHA-256 checksum verification, CLI/JSON output, negative tests.
+- [ ] Console-specific entry app, boot handoff, game launch and PS5-specific hardware testing remain future work.

@@ -1,8 +1,8 @@
 # AstraPS5 architecture (app-first proposal)
 
-**EXPERIMENTAL TEST PROJECT.** The diagnostic CLI and minimal native Linux menu prototype exist today.
-No PS5 home-menu tile, boot manager, custom distro, game launcher or playable
-PC games are implemented by AstraPS5 at this stage.
+**EXPERIMENTAL TEST PROJECT.** The diagnostic CLI, minimal native Linux menu, and read-only SHA-256 image-integrity
+preflight exist today. No PS5 home-menu tile, functional boot handoff, custom
+distro, game launcher or playable PC games are implemented at this stage.
 
 ## Product requirement
 
@@ -22,10 +22,10 @@ Linux bootloader interfaces, with explicit firmware/hardware compatibility.
    compatibility and explicit `Launch AstraPS5`/`Cancel` controls. Uses only
    supported homebrew APIs and available loader integration; no firmware code
    or console secrets shipped.
-2. **Astra Boot** (PS5 side, not implemented): verifies a signed/checksummed
-   image manifest, detects supported model/firmware/loader, checks storage and
-   power requirements, and calls an externally supplied compatible loader.
-   If validation fails, it returns an error without changing boot state.
+2. **Astra Boot** (preflight partially implemented on Linux only): `astra boot verify`
+   reads a versioned manifest and checks SHA-256 image integrity without mounting,
+   modifying storage, or booting. PS5-side model/firmware/loader checks, signed
+   image authentication, recovery, and loader handoff are **not implemented**.
 3. **Astra System** (Linux boot image, not implemented): custom gaming-oriented
    root filesystem with the required kernel/driver/runtime stack. Initially
    stored separately from the PS5 internal system partition and booted using
@@ -33,8 +33,8 @@ Linux bootloader interfaces, with explicit firmware/hardware compatibility.
 4. **Astra Shell** (Linux, prototype only): a minimal X11 window currently shows
    real Astra diagnostics and Exit. The future auto-starting, controller-first
    gaming shell is not implemented. See [ui.md](ui.md).
-5. **Astra Core** (Linux, implemented): C++17 diagnostics reporting readable
-   text and JSON, useful both during development and later in the Shell.
+5. **Astra Core** (Linux, implemented): C++17 diagnostics and boot-image preflight
+   reporting readable text and JSON, useful both during development and later in the Shell.
 6. **Astra Runtime / Profiles** (Linux, not implemented): game launch, Wine /
    Proton integration, logs, hardware-specific configuration, and game profiles.
 

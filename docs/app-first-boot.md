@@ -33,12 +33,13 @@
 ## Initial integration contract (proposed)
 
 Before touching actual boot control, design a versioned machine-readable
-manifest containing:
+manifest. **Initial v1 is implemented only for image integrity and target metadata**
+([manifest specification](boot-manifest.md)). The future PS5-side preflight also needs:
 
-- image version and cryptographic hash
-- supported console model and firmware range (never wildcards by default)
-- required loader version / interface
-- root filesystem location and format
+- trusted image version and cryptographic hash (v1 checks hash only; no signature yet)
+- validated console model and firmware range (v1 stores labels only)
+- required loader version / interface (v1 stores a name only)
+- root filesystem location and format (v1 stores an image path only)
 - kernel and initrd identification
 - last-known-good configuration and recovery instructions
 
@@ -49,8 +50,9 @@ it must not silently assume a working boot path.
 
 - [ ] Research supported PS5 SDK/homebrew tile packaging options for the test console.
 - [ ] Choose the exact external loader integration point and its licensing obligations.
-- [ ] Implement a read-only boot readiness check and versioned manifest parser
-      with tests on ordinary Linux before running any PS5-side payload.
+- [x] Implement a versioned image manifest parser and SHA-256 integrity check
+      with tests on ordinary Linux (`astra boot verify`). **Not a console readiness check.**
+- [ ] Implement a real console-side boot readiness check and validate firmware/loader support.
 - [ ] Build a minimal Astra Entry proof of concept that shows launch readiness.
 - [ ] Test initiating an **existing** trusted Linux boot payload on hardware.
 - [ ] Package a minimal Astra System image with direct controller-first shell boot.

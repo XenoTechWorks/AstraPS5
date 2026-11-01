@@ -1,0 +1,8 @@
+# AstraPS5 boot manifest v1 — TEMPLATE ONLY; it is not usable as-is.
+# See docs/boot-manifest.md before using.
+format=astraps5-boot-v1
+image=astra-system.img
+sha256=0000000000000000000000000000000000000000000000000000000000000000
+console=ps5
+firmware=13.60
+loader=ps5-linux-loader

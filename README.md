@@ -15,6 +15,7 @@ For now, the repository is a small, **connected C++17 project** with real system
 | --- | --- |
 | `astra doctor` / `astra doctor --json` | Implemented: read-only host diagnostics |
 | `astra menu` | Implemented: minimal native graphical menu prototype |
+| `astra boot verify <manifest>` | Implemented: SHA-256 image integrity preflight; **does not boot a console** |
 | Diagnostics page inside menu | Implemented: displays the same diagnostics as the CLI |
 | PS5 home-screen app / bootloader | Not implemented |
 | Native Linux or Wine/Proton game launching | Not implemented |
@@ -30,12 +31,18 @@ The X11 UI runs on desktop Linux or an XWayland session. It is an early testing 
 
 ## Build and run on Linux
 
-Requirements: CMake 3.16+, C++17 compiler, and X11 development headers for the GUI.
+Requirements: CMake 3.16+, C++17 compiler, OpenSSL development headers for SHA-256, and X11 development headers for the GUI.
 
 On Debian/Ubuntu:
 
 ```bash
-sudo apt install build-essential cmake libx11-dev
+sudo apt install build-essential cmake libx11-dev libssl-dev
+```
+
+On Arch/CachyOS:
+
+```bash
+sudo pacman -S --needed base-devel cmake libx11 openssl
 ```
 
 Then from the AstraPS5 repository root:
@@ -50,12 +57,13 @@ ctest --test-dir build --output-on-failure
 
 Inside the menu, use **Up / Down**, **Enter**, **Escape**, or the mouse. The system information is collected on the machine that runs the program; running it on a PC is **not** proof of PS5 compatibility.
 
-The command-line tools remain available:
+The command-line tools remain available (see [boot manifest instructions](docs/boot-manifest.md) for a real image):
 
 ```bash
 ./build/astra doctor
 ./build/astra doctor --json
 ./build/astra version
+./build/astra boot verify examples/astraps5.boot.example  # fails until a real image/hash is provided
 ./build/astra help
 ```
 
@@ -70,11 +78,13 @@ AstraPS5/
 ├── include/astraps5/          C++ public headers
 ├── src/
 │   ├── main.cpp               Astra CLI entry point
+│   ├── boot.cpp               Read-only image integrity preflight
 │   ├── diagnostics.cpp        Actual Linux diagnostics
 │   ├── menu_state.cpp         UI navigation logic
 │   ├── menu_x11.cpp           Minimal native Linux window
 │   └── menu_stub.cpp          Fallback when X11 is absent
 ├── tests/                      Diagnostics and menu unit tests
+├── examples/                   Boot manifest template (not bootable)
 └── docs/                       Research and plans
 ```
 
@@ -92,9 +102,9 @@ Astra Shell / PC game runtime         (minimal shell prototype only)
 PC game servers where officially supported
 ```
 
-The entry app, boot handoff, image format, GPU drivers, game runtime, and multiplayer have substantial unanswered engineering constraints. There is no guaranteed method for installing AstraPS5 as a normal app on a stock retail PS5.
+The entry app, boot handoff, bootable image format, GPU drivers, game runtime, and multiplayer have substantial unanswered engineering constraints. There is no guaranteed method for installing AstraPS5 as a normal app on a stock retail PS5.
 
-For the actual research plans, read [Architecture](docs/architecture.md), [Boot concept](docs/app-first-boot.md), [Roadmap](docs/roadmap.md), and [First hardware test](docs/first-ps5-test.md).
+For the actual research plans, read [Architecture](docs/architecture.md), [Boot concept](docs/app-first-boot.md), [Boot manifest v1](docs/boot-manifest.md), [Roadmap](docs/roadmap.md), and [First hardware test](docs/first-ps5-test.md).
 
 ## License and independence
 
@@ -102,4 +112,4 @@ AstraPS5 original source code is licensed under **[Apache-2.0](LICENSE)**. See [
 
 AstraPS5 is not affiliated with or endorsed by Sony Interactive Entertainment, Valve, or Microsoft. PlayStation and PS5 are trademarks of Sony Interactive Entertainment.
 
-**Xeno Tech · AstraPS5 v0.2.0-dev · Experimental Test Project**
+**Xeno Tech · AstraPS5 v0.2.1-dev · Experimental Test Project**
