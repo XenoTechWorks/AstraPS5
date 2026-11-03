@@ -1,0 +1,25 @@
+name: Astra Shell
+on:
+  pull_request:
+    paths:
+      - 'shell/**'
+      - '.github/workflows/shell.yml'
+      - 'scripts/astra-session.sh'
+  push:
+    paths:
+      - 'shell/**'
+      - '.github/workflows/shell.yml'
+jobs:
+  dotnet-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore and build Avalonia Shell
+        run: dotnet build shell/Astra.Shell/Astra.Shell.csproj -c Release
+      - name: Run catalog smoke tests
+        run: dotnet run --project shell/Astra.Shell.Smoke/Astra.Shell.Smoke.csproj -c Release
+      - name: Check shell supervisor syntax
+        run: sh -n scripts/astra-session.sh

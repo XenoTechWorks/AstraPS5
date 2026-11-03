@@ -1,0 +1,317 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Astra.Shell"
+        x:Class="Astra.Shell.MainWindow"
+        Width="1360" Height="840" MinWidth="900" MinHeight="610"
+        Title="Astra Shell" Background="#030A1B" Foreground="#F5F8FF"
+        KeyDown="OnKeyDown">
+  <Window.Styles>
+    <Style Selector="Button.nav">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#D4E2F5"/>
+      <Setter Property="FontSize" Value="15"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Padding" Value="17,11"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.nav:pointerover">
+      <Setter Property="Background" Value="#3C79B9EC"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.nav:focus">
+      <Setter Property="Background" Value="#3979B9EC"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+    <Style Selector="Button.brand">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#F5FBFF"/>
+      <Setter Property="FontSize" Value="23"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Padding" Value="8,10"/>
+      <Setter Property="CornerRadius" Value="10"/>
+    </Style>
+    <Style Selector="Button.brand:pointerover">
+      <Setter Property="Foreground" Value="#85DEFF"/>
+    </Style>
+    <Style Selector="Button.action">
+      <Setter Property="Background" Value="#A9E6FF"/>
+      <Setter Property="Foreground" Value="#092341"/>
+      <Setter Property="FontSize" Value="16"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Padding" Value="30,15"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.action:pointerover">
+      <Setter Property="Background" Value="#E9F9FF"/>
+    </Style>
+    <Style Selector="Button.secondary">
+      <Setter Property="Background" Value="#3C9EC8E8"/>
+      <Setter Property="Foreground" Value="#F4FAFF"/>
+      <Setter Property="FontSize" Value="15"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Padding" Value="22,14"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="BorderBrush" Value="#5C9FCCED"/>
+    </Style>
+    <Style Selector="Button.secondary:pointerover">
+      <Setter Property="Background" Value="#739EC8E8"/>
+    </Style>
+    <Style Selector="Button.game-tile">
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Background" Value="#143158"/>
+      <Setter Property="BorderThickness" Value="2"/>
+      <Setter Property="BorderBrush" Value="#2AACC8EF"/>
+      <Setter Property="CornerRadius" Value="12"/>
+    </Style>
+    <Style Selector="Button.game-tile:pointerover">
+      <Setter Property="BorderBrush" Value="#D3F4FF"/>
+    </Style>
+    <Style Selector="Button.game-tile:focus">
+      <Setter Property="BorderBrush" Value="White"/>
+    </Style>
+    <Style Selector="TextBlock.eyebrow">
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Foreground" Value="#8ADAF8"/>
+    </Style>
+  </Window.Styles>
+
+  <Grid>
+    <local:WaveBackground x:Name="Waves"/>
+    <Border Background="#22020C22"/>
+
+    <Grid Margin="34,20,34,26" RowDefinitions="Auto,*" RowSpacing="19">
+      <!-- ASTRA is the Home button. The other two tabs are the only main destinations. -->
+      <Border Grid.Row="0" CornerRadius="14" Background="#BD061329"
+              BorderBrush="#4087BFE8" BorderThickness="1" Padding="16,9">
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="18">
+          <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+            <Border CornerRadius="4" Background="#89DDFF" Width="5" Height="25" VerticalAlignment="Center" Margin="0,0,6,0"/>
+            <Button Classes="brand" Content="ASTRA" Click="HomeClicked"/>
+            <Border Background="#365AB1D8" CornerRadius="6" Padding="8,4" VerticalAlignment="Center" Margin="2,0,0,0">
+              <TextBlock Text="SHELL" FontSize="10" FontWeight="Bold" Foreground="#CEEFFF"/>
+            </Border>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" Margin="10,0,0,0">
+            <Button Classes="nav" Content="Library" Click="LibraryClicked"/>
+            <Button Classes="nav" Content="Settings" Click="SettingsClicked"/>
+          </StackPanel>
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <TextBlock x:Name="DateLabel" FontSize="13" Foreground="#9EBCD7" VerticalAlignment="Center" Margin="0,0,4,0"/>
+            <Button Classes="nav" Click="ClockClicked" Padding="10,6" ToolTip.Tip="Double-click to toggle seconds">
+              <TextBlock x:Name="TimeLabel" FontSize="18" FontWeight="SemiBold" Foreground="#F5FBFF"/>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Grid Grid.Row="1">
+        <!-- Home: PS4-style horizontal covers with a compact Xbox-inspired spotlight. -->
+        <Grid x:Name="HomePage">
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="21" Margin="8,9,8,38">
+              <Border Grid.Row="0" Height="263" CornerRadius="18"
+                      BorderBrush="#4376A4C8" BorderThickness="1" ClipToBounds="True">
+                <Border.Background>
+                  <LinearGradientBrush StartPoint="0%,50%" EndPoint="100%,50%">
+                    <GradientStop Color="#D5071429" Offset="0"/>
+                    <GradientStop Color="#A2081732" Offset="0.70"/>
+                    <GradientStop Color="#590B223C" Offset="1"/>
+                  </LinearGradientBrush>
+                </Border.Background>
+                <Grid ColumnDefinitions="*,178" ColumnSpacing="28" Margin="38,22,31,22">
+                  <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left"
+                              Spacing="10" MaxWidth="760">
+                    <TextBlock Classes="eyebrow" Text="NOW SELECTED" FontSize="12"/>
+                    <TextBlock x:Name="HeroTitle" Text="Welcome to Astra" FontSize="43"
+                               FontWeight="Bold" Foreground="#F7FAFF" LineHeight="48"
+                               TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxLines="2"/>
+                    <TextBlock x:Name="HeroSubtitle" FontSize="15" Foreground="#BDD1E5"
+                               TextWrapping="Wrap" MaxLines="2"/>
+                    <Button x:Name="HeroDetails" Classes="action" Content="View game"
+                            HorizontalAlignment="Left" Margin="0,11,0,0"
+                            Click="HeroActionClicked" IsEnabled="False"/>
+                  </StackPanel>
+                  <Border Grid.Column="1" Width="164" Height="213" HorizontalAlignment="Center"
+                          VerticalAlignment="Center" CornerRadius="11" Background="#0C2949"
+                          BorderThickness="1" BorderBrush="#687DB1D8" ClipToBounds="True">
+                    <Grid>
+                      <TextBlock x:Name="HeroCoverFallback" Text="ASTRA" FontSize="28"
+                                 FontWeight="Bold" Foreground="#84D5EF"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                      <Image x:Name="HeroCover" Stretch="UniformToFill" IsVisible="False"/>
+                    </Grid>
+                  </Border>
+                </Grid>
+              </Border>
+
+              <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="3,5,3,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+                  <TextBlock Text="YOUR GAMES" FontSize="21" FontWeight="Bold" Foreground="White"/>
+                  <TextBlock x:Name="GameCountLabel" FontSize="13" Foreground="#ABC9DF"
+                             VerticalAlignment="Center"/>
+                </StackPanel>
+                <Button Grid.Column="1" Classes="nav" Content="Browse library" Click="LibraryClicked"/>
+              </Grid>
+
+              <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Disabled">
+                <StackPanel x:Name="HomeGameRow" Orientation="Horizontal" Spacing="11"
+                            MinHeight="264" Margin="3,7,5,18"/>
+              </ScrollViewer>
+            </Grid>
+          </ScrollViewer>
+        </Grid>
+
+        <Grid x:Name="LibraryPage" IsVisible="False" RowDefinitions="Auto,Auto,*" RowSpacing="19" Margin="8,21,8,0">
+          <Grid ColumnDefinitions="*,Auto">
+            <StackPanel Spacing="6">
+              <TextBlock Text="Game Library" FontSize="39" FontWeight="Bold"/>
+              <TextBlock Text="Everything in one place." FontSize="15" Foreground="#AFC9E4"/>
+            </StackPanel>
+            <Button Grid.Column="1" Classes="secondary" Content="Refresh" Click="RefreshClicked" VerticalAlignment="Center"/>
+          </Grid>
+          <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+            <Border Background="#AE071731" BorderBrush="#518DC3E2" BorderThickness="1" CornerRadius="11" Padding="7,3">
+              <TextBox x:Name="SearchBox" Watermark="Search your library" Background="Transparent"
+                       BorderThickness="0" TextChanged="SearchChanged" FontSize="16"/>
+            </Border>
+            <Button Grid.Column="1" x:Name="FilterButton" Classes="secondary" Content="All games" Click="FilterClicked"/>
+          </Grid>
+          <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <WrapPanel x:Name="LibraryGameGrid" ItemWidth="210" ItemHeight="255"/>
+          </ScrollViewer>
+        </Grid>
+
+        <Grid x:Name="DetailsPage" IsVisible="False" Margin="9,40,9,40"
+              RowDefinitions="Auto,*" RowSpacing="32">
+          <Grid ColumnDefinitions="225,*" ColumnSpacing="36">
+            <Border Width="213" Height="292" VerticalAlignment="Top" CornerRadius="13"
+                    Background="#244465" BorderBrush="#4F96C5EA" BorderThickness="1"
+                    ClipToBounds="True">
+              <Grid>
+                <TextBlock x:Name="DetailsCoverFallback" Text="ASTRA" FontWeight="Bold" FontSize="28"
+                           Foreground="#75B6DB" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Image x:Name="DetailsCover" Stretch="UniformToFill" IsVisible="False"/>
+              </Grid>
+            </Border>
+            <StackPanel Grid.Column="1" Spacing="15" VerticalAlignment="Center">
+              <TextBlock Classes="eyebrow" Text="GAME DETAILS"/>
+              <TextBlock x:Name="DetailsTitle" FontSize="44" FontWeight="Bold" TextWrapping="Wrap"
+                         MaxLines="2" TextTrimming="CharacterEllipsis" MaxWidth="950"/>
+              <TextBlock x:Name="DetailsAvailability" FontSize="16" Foreground="#C6D9EA" TextWrapping="Wrap"/>
+              <StackPanel Orientation="Horizontal" Spacing="13" Margin="0,13,0,0">
+                <Button x:Name="DetailsPlay" Classes="action" Content="Play game" Click="PlayClicked"/>
+                <Button Classes="secondary" Content="Game settings" Click="GameSettingsClicked"/>
+                <Button Classes="secondary" Content="Back to library" Click="LibraryClicked"/>
+              </StackPanel>
+            </StackPanel>
+          </Grid>
+          <StackPanel Grid.Row="1" Spacing="6">
+            <TextBlock x:Name="DetailsSource" IsVisible="False"/>
+            <TextBlock x:Name="DetailsId" IsVisible="False"/>
+          </StackPanel>
+        </Grid>
+
+        <Grid x:Name="SettingsPage" IsVisible="False" RowDefinitions="Auto,*" RowSpacing="20" Margin="8,24,8,0">
+          <StackPanel Spacing="5">
+            <TextBlock Text="Astra Settings" FontSize="39" FontWeight="Bold"/>
+            <TextBlock Text="Make your home screen yours." FontSize="15" Foreground="#AAC8DE"/>
+          </StackPanel>
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16" MaxWidth="925" HorizontalAlignment="Left" Margin="0,0,0,32">
+              <Border Background="#B1091B38" BorderBrush="#4783BBE8" BorderThickness="1" CornerRadius="16" Padding="27">
+                <StackPanel Spacing="17">
+                  <TextBlock Text="Appearance" FontSize="24" FontWeight="Bold"/>
+                  <TextBlock Text="Customize the games rail, wallpaper, and clock." FontSize="14" Foreground="#B5CBE2"/>
+                  <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Spacing="5" VerticalAlignment="Center">
+                      <TextBlock Text="Game tile size" FontSize="16" FontWeight="SemiBold"/>
+                      <TextBlock Text="Adjust cover size for your display" FontSize="13" Foreground="#9FBAD5"/>
+                    </StackPanel>
+                    <ComboBox Grid.Column="1" x:Name="TileSizeChoice" Width="205" HorizontalAlignment="Right">
+                      <ComboBoxItem Content="Compact"/>
+                      <ComboBoxItem Content="Standard"/>
+                      <ComboBoxItem Content="Large"/>
+                    </ComboBox>
+                  </Grid>
+                  <Border Height="1" Background="#326F9FC8"/>
+                  <CheckBox x:Name="AnimationCheck" Content="Animate the Astra wallpaper" FontSize="16"/>
+                  <CheckBox x:Name="GameBackgroundCheck" Content="Show game artwork behind the interface" FontSize="16"/>
+                  <CheckBox x:Name="SecondsCheck" Content="Show seconds in the clock" FontSize="16"/>
+                </StackPanel>
+              </Border>
+              <Border Background="#B1091B38" BorderBrush="#4783BBE8" BorderThickness="1" CornerRadius="16" Padding="27">
+                <StackPanel Spacing="17">
+                  <TextBlock Text="System &amp; information" FontSize="24" FontWeight="Bold"/>
+                  <TextBlock Text="Updates, controls, and diagnostics stay here—not on your game screen." FontSize="14" Foreground="#B5CBE2" TextWrapping="Wrap"/>
+                  <StackPanel Orientation="Horizontal" Spacing="13">
+                    <Button Classes="secondary" Content="What's New" Click="NewsClicked"/>
+                    <Button Classes="secondary" Content="Diagnostics" Click="DiagnosticsClicked"/>
+                    <Button Classes="secondary" Content="Controls &amp; help" Click="HelpClicked"/>
+                  </StackPanel>
+                  <TextBlock Text="Per-game compatibility settings are in each game's page. Proton changes require future Astra Core support."
+                             TextWrapping="Wrap" FontSize="13" Foreground="#AFC5DD"/>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+
+        <Grid x:Name="DiagnosticsPage" IsVisible="False" RowDefinitions="Auto,*" RowSpacing="20" Margin="8,26,8,0">
+          <StackPanel Orientation="Horizontal" Spacing="18" VerticalAlignment="Center">
+            <TextBlock Text="Diagnostics" FontSize="39" FontWeight="Bold"/>
+            <Button Classes="secondary" Content="Astra Settings" Click="SettingsClicked"/>
+            <Button Classes="secondary" Content="Refresh" Click="DiagnosticsClicked"/>
+          </StackPanel>
+          <Border Grid.Row="1" Background="#C5061732" BorderBrush="#4783BBE8" BorderThickness="1" CornerRadius="15" Padding="24">
+            <ScrollViewer><TextBlock x:Name="DiagnosticsText" FontFamily="monospace" FontSize="14" TextWrapping="Wrap"/></ScrollViewer>
+          </Border>
+        </Grid>
+
+        <Grid x:Name="NewsPage" IsVisible="False" RowDefinitions="Auto,*" Margin="8,27,8,0">
+          <StackPanel Spacing="7">
+            <TextBlock Text="What's New" FontSize="39" FontWeight="Bold"/>
+            <TextBlock Text="Astra Shell release notes" FontSize="14" Foreground="#AAC8DE"/>
+          </StackPanel>
+          <ScrollViewer Grid.Row="1" Margin="0,24,0,0">
+            <StackPanel Spacing="15" MaxWidth="870" HorizontalAlignment="Left">
+              <Border CornerRadius="14" Background="#B1091B38" BorderBrush="#4783BBE8" BorderThickness="1" Padding="28">
+                <StackPanel Spacing="13">
+                  <TextBlock Classes="eyebrow" Text="INTERFACE PREVIEW"/>
+                  <TextBlock Text="Astra Shell v0.8 — console home polish" FontSize="27" FontWeight="Bold"/>
+                  <TextBlock Text="• Smaller, left-aligned selected game spotlight&#x0a;• Readable poster-sized covers with better focus feedback&#x0a;• Distinct title placeholders when real cover art is unavailable&#x0a;• Utility launchers kept in the full library instead of the home games rail&#x0a;• More balanced layout and less clutter&#x0a;• Existing Astra Core launch and settings integration preserved"
+                             FontSize="17" LineHeight="32" TextWrapping="Wrap"/>
+                  <TextBlock Text="This remains a Linux PC preview. Steam launching and PS5 booting are not available yet." Foreground="#AFC5DD" FontSize="14" TextWrapping="Wrap"/>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </Grid>
+    </Grid>
+
+    <Border x:Name="NotificationToast" IsVisible="False" Background="#E20D2947"
+            BorderBrush="#84B0E3FF" BorderThickness="1" CornerRadius="13" Padding="21,15"
+            HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,35" MaxWidth="760">
+      <TextBlock x:Name="NotificationText" Foreground="White" FontSize="15" TextWrapping="Wrap"/>
+    </Border>
+
+    <Border x:Name="WelcomeOverlay" Background="#F0061329" IsVisible="False" Padding="38"
+            BorderBrush="#9DB4E8FF" BorderThickness="1" CornerRadius="20"
+            HorizontalAlignment="Center" VerticalAlignment="Center" Width="620">
+      <StackPanel Spacing="20">
+        <TextBlock Classes="eyebrow" Text="GETTING STARTED"/>
+        <TextBlock Text="Hey, welcome to Astra." FontSize="35" FontWeight="Bold"/>
+        <TextBlock Text="← / →   Move between games&#x0a;Enter   Open selected game&#x0a;Esc   Return to Astra&#x0a;Mouse   Hover to preview, click to open&#x0a;Clock   Double-click to toggle seconds"
+                   FontSize="18" LineHeight="34"/>
+        <TextBlock Text="Available Flatpak games can launch through Astra Core. Steam launching is not supported yet."
+                   FontSize="14" TextWrapping="Wrap" Foreground="#B0C9DE"/>
+        <Button Classes="action" Content="Let's go" HorizontalAlignment="Left" Click="DismissWelcomeClicked"/>
+      </StackPanel>
+    </Border>
+  </Grid>
+</Window>
