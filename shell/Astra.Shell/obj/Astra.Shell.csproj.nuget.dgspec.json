@@ -1,0 +1,83 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/animated/Work/AstraPS5/shell/Astra.Shell/Astra.Shell.csproj": {}
+  },
+  "projects": {
+    "/home/animated/Work/AstraPS5/shell/Astra.Shell/Astra.Shell.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/animated/Work/AstraPS5/shell/Astra.Shell/Astra.Shell.csproj",
+        "projectName": "Astra.Shell",
+        "projectPath": "/home/animated/Work/AstraPS5/shell/Astra.Shell/Astra.Shell.csproj",
+        "packagesPath": "/home/animated/.nuget/packages/",
+        "outputPath": "/home/animated/Work/AstraPS5/shell/Astra.Shell/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/animated/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "framework": "net8.0",
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.400"
+      },
+      "frameworks": {
+        "net8.0": {
+          "framework": "net8.0",
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Avalonia": {
+              "target": "Package",
+              "version": "[11.3.22, )"
+            },
+            "Avalonia.Desktop": {
+              "target": "Package",
+              "version": "[11.3.22, )"
+            },
+            "Avalonia.Themes.Fluent": {
+              "target": "Package",
+              "version": "[11.3.22, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/home/animated/.dotnet/sdk/10.0.403/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
