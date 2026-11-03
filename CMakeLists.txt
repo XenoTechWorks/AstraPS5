@@ -14,6 +14,12 @@ target_include_directories(astra_boot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
 target_link_libraries(astra_boot PUBLIC astra_diagnostics OpenSSL::Crypto)
 target_compile_options(astra_boot PRIVATE -Wall -Wextra -Wpedantic)
 
+# Offline boot bundle inspection and read-only boot plan generation.
+add_library(astra_boot_manager STATIC src/boot_manager.cpp)
+target_include_directories(astra_boot_manager PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(astra_boot_manager PUBLIC OpenSSL::Crypto)
+target_compile_options(astra_boot_manager PRIVATE -Wall -Wextra -Wpedantic)
+
 # Linux-native + Flatpak game launcher. No shell, Steam, Proton, or PS5 integration.
 add_library(astra_game STATIC src/game.cpp)
 target_include_directories(astra_game PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -55,7 +61,7 @@ target_include_directories(astra_ui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_compile_options(astra_ui PRIVATE -Wall -Wextra -Wpedantic)
 
 add_executable(astra src/main.cpp)
-target_link_libraries(astra PRIVATE astra_diagnostics astra_ui astra_boot astra_game astra_library astra_steam)
+target_link_libraries(astra PRIVATE astra_diagnostics astra_ui astra_boot astra_boot_manager astra_game astra_library astra_steam)
 target_compile_options(astra PRIVATE -Wall -Wextra -Wpedantic)
 
 include(CTest)
@@ -65,6 +71,11 @@ if(BUILD_TESTING)
   add_executable(astra_boot_tests tests/boot_test.cpp)
   target_link_libraries(astra_boot_tests PRIVATE astra_boot)
   add_test(NAME boot_manifest_unit COMMAND astra_boot_tests)
+  add_executable(astra_boot_manager_tests tests/boot_manager_test.cpp)
+  target_link_libraries(astra_boot_manager_tests PRIVATE astra_boot_manager)
+  add_test(NAME boot_manager_unit COMMAND astra_boot_manager_tests)
+  add_test(NAME cli_boot_plan_inspect COMMAND astra boot inspect ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures/boot-plan/astra.bootplan)
+  add_test(NAME cli_boot_plan_json COMMAND astra boot plan ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures/boot-plan/astra.bootplan --json)
   add_executable(astra_game_tests tests/game_test.cpp)
   target_link_libraries(astra_game_tests PRIVATE astra_game)
   add_test(NAME game_profile_unit COMMAND astra_game_tests)

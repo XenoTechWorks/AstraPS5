@@ -1,6 +1,7 @@
 // Copyright 2026 Xeno Tech
 // SPDX-License-Identifier: Apache-2.0
 #include "astraps5/boot.hpp"
+#include "astraps5/boot_manager.hpp"
 #include "astraps5/game.hpp"
 #include "astraps5/library.hpp"
 #include "astraps5/steam.hpp"
@@ -16,6 +17,8 @@ void help() {
                  "  astra menu               Open the minimal native Astra UI\n"
                  "  astra doctor [--json]    Read-only Linux and gaming diagnostics\n"
                  "  astra boot verify <manifest> [--json]  Verify Linux image integrity (no boot)\n"
+                 "  astra boot inspect <plan> [--json]  Inspect boot bundle integrity (no boot)\n"
+                 "  astra boot plan <plan> [--json]     Prepare an offline boot plan (no boot)\n"
                  "  astra games list [--json]  Discover installed Flatpak games\n"
                  "  astra games run <app_id>  Launch a detected Flatpak game\n"
                  "  astra steam list [--json]  Discover installed Steam titles / Proton builds\n"
@@ -47,6 +50,16 @@ int main(int argc, char* argv[]) {
         std::cout << (argc == 5 ? astra::boot_verification_json(result)
                                : astra::boot_verification_text(result));
         return result.verified ? 0 : 1;
+    }
+    if (command == "boot" && argc >= 3 &&
+        (std::string(argv[2]) == "inspect" || std::string(argv[2]) == "plan") &&
+        (argc == 4 || (argc == 5 && std::string(argv[4]) == "--json"))) {
+        const bool prepare = std::string(argv[2]) == "plan";
+        const auto result = prepare ? astra::prepare_boot_plan(argv[3])
+                                    : astra::inspect_boot_bundle(argv[3]);
+        std::cout << (argc == 5 ? astra::boot_plan_json(result)
+                               : astra::boot_plan_text(result));
+        return result.images_verified ? 0 : 1;
     }
     if (command == "steam" && argc >= 3 && std::string(argv[2]) == "list" &&
         (argc == 3 || (argc == 4 && std::string(argv[3]) == "--json"))) {

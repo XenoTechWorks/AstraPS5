@@ -1,0 +1,12 @@
+# Astra Boot Manager v1 — format for the new 'inspect' and 'plan' commands.
+# This is a TEMPLATE with placeholder hashes, not a working boot bundle.
+# Place alongside boot/ and system/. See docs/boot-manager.md.
+format=astraps5-boot-plan-v1
+target=linux-pc
+loader=qemu
+kernel=boot/vmlinuz
+kernel_sha256=0000000000000000000000000000000000000000000000000000000000000000
+initrd=boot/initrd.img
+initrd_sha256=0000000000000000000000000000000000000000000000000000000000000000
+rootfs=system/rootfs.img
+rootfs_sha256=0000000000000000000000000000000000000000000000000000000000000000

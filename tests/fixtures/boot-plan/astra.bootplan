@@ -1,0 +1,10 @@
+# Dummy bytes for CLI smoke tests only. These do not boot!
+format=astraps5-boot-plan-v1
+target=linux-pc
+loader=qemu
+kernel=fake-kernel.bin
+kernel_sha256=2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
+initrd=fake-initrd.bin
+initrd_sha256=2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
+rootfs=fake-rootfs.bin
+rootfs_sha256=2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824
